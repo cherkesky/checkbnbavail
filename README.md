@@ -5,5 +5,5 @@
 
 
 
-AirbnbAvailabiliy
+AirbnbAvailabiliy is a GoLang based service optimized for performance, concurrency, and effieciency. The service is being used by Maistr, an AWS/Python based Airbnb management system that I developed in a private repo.
 
