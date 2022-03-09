@@ -51,7 +51,7 @@ func main() {
 
 	complexes := [][]string{dwellPropertyIds, lucilePropertyIds, sharpePropertyIds, franklinPropertyIds}
 
-	token := get_token().AuthToken
+	token := get_token()
 
 	for complex := range complexes {
 		for propertyId := range complexes[complex] {
@@ -113,7 +113,7 @@ func checkAvailability(propertyId string, start_date string, end_date string, to
 }
 
 // grab a token from AWS Secrets Manager
-func get_token() SecretData {
+func get_token() string {
 	svc := secretsmanager.New(
 		session.New(),
 		aws.NewConfig().WithRegion(region),
@@ -140,5 +140,5 @@ func get_token() SecretData {
 		panic(err.Error())
 	}
 
-	return secretData
+	return secretData.AuthToken
 }
