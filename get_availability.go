@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"sync"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -53,11 +54,24 @@ func main() {
 
 	token := get_token()
 
+	c := make(chan string)
+	var wg sync.WaitGroup
+
 	for complex := range complexes {
 		for propertyId := range complexes[complex] {
 			property := complexes[complex][propertyId]
-			checkAvailability(property, start_date, end_date, token)
+			wg.Add(1)
+			go checkAvailability(property, start_date, end_date, token, c, &wg)
 		}
+	}
+
+	go func() {
+		wg.Wait()
+		close(c)
+	}()
+
+	for p := range c {
+		availProperties = append(availProperties, p)
 	}
 
 	if len(availProperties) != 0 {
@@ -65,10 +79,15 @@ func main() {
 	} else {
 		fmt.Println("No available properties")
 	}
+
 }
 
 // Check if a property is available
-func checkAvailability(propertyId string, start_date string, end_date string, token string) {
+func checkAvailability(propertyId string, start_date string, end_date string, token string, c chan string, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	fmt.Println("Checking availability for property: ", propertyId)
+
 	base_url := "https://api.hospitable.com/calendar/"
 	url := base_url + propertyId + "?start_date=" + start_date + "&end_date=" + end_date
 	method := "GET"
@@ -107,7 +126,7 @@ func checkAvailability(propertyId string, start_date string, end_date string, to
 		if !responsedata.Data.Days[day].Status.Available {
 			break
 		} else if daysCounter == daysLength {
-			availProperties = append(availProperties, propertyId)
+			c <- propertyId
 		}
 	}
 }
