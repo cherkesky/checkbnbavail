@@ -9,6 +9,7 @@ import (
 	"sync"
 
 	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/aws/aws-lambda-go/lambdacontext"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/secretsmanager"
@@ -41,18 +42,46 @@ type ResponseData struct {
 	}
 }
 
+// type ResponseData2 struct {
+// 	Data Data
+// }
+// type Data struct {
+// 	Listing_id string `json:"listing_id"`
+// 	Provider   string `json:"provider"`
+// 	Start_date string `json:"start_date"`
+// 	End_date   string `json:"end_date"`
+// 	Days       Days   `json:"days"`
+// }
+
+// type Days struct {
+// 	Date    string `json:"date"`
+// 	Day     string `json:"day"`
+// 	MinStay int    `json:"min_stay"`
+// 	Status  Status `json:"status"`
+// }
+
+// type Status struct {
+// 	Reason    string `json:"reason"`
+// 	Available bool   `json:"available"`
+// }
+
 var (
-	secretName      string = "smartbnb_token_1"
-	region          string = "us-east-1"
-	versionStage    string = "AWSCURRENT"
-	availProperties []string
+	secretName           string = "smartbnb_token_1"
+	region               string = "us-east-1"
+	versionStage         string = "AWSCURRENT"
+	availProperties      []string
+	availPropertiesNicks []string
 )
 
 func main() {
 	lambda.Start(HandleRequest)
+
 }
 
 func HandleRequest(ctx context.Context, input InputData) ([]string, error) {
+	lc, _ := lambdacontext.FromContext(ctx)
+	fmt.Println("Context: ", lc.ClientContext)
+
 	inputJSON, _ := json.Marshal(input)
 	fmt.Println("Input: ", string(inputJSON))
 
@@ -63,7 +92,6 @@ func HandleRequest(ctx context.Context, input InputData) ([]string, error) {
 	lucilePropertyIds := []string{"155944", "156010", "156008", "155942"}
 	sharpePropertyIds := []string{"623998", "624000", "628594", "633472", "650394", "650416"}
 	franklinPropertyIds := []string{"164362"}
-
 	complexes := [][]string{dwellPropertyIds, lucilePropertyIds, sharpePropertyIds, franklinPropertyIds}
 
 	token := get_token()
@@ -93,9 +121,8 @@ func HandleRequest(ctx context.Context, input InputData) ([]string, error) {
 	} else {
 		fmt.Println("No available properties")
 	}
-
-	return (availProperties), nil
-
+	availPropertiesNicks, _ := getListingByProperty(availProperties)
+	return (availPropertiesNicks), nil
 }
 
 // Check if a property is available
@@ -131,10 +158,13 @@ func checkAvailability(propertyId string, start_date string, end_date string, to
 		fmt.Println(err)
 		return
 	}
+
 	responsedata := ResponseData{}
 	json.Unmarshal(body, &responsedata)
+	fmt.Println(responsedata)
 
 	daysLength := len(responsedata.Data.Days)
+
 	daysCounter := 0
 
 	for day := range responsedata.Data.Days {
