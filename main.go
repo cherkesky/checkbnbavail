@@ -89,10 +89,11 @@ func HandleRequest(ctx context.Context, input InputData) ([]string, error) {
 	end_date := input.EndDate
 
 	dwellPropertyIds := []string{"119966", "529490", "625432", "164360", "119676"}
+	cliftonPropertyIds := []string{"164358", "119690"}
 	lucilePropertyIds := []string{"155944", "156010", "156008", "155942"}
 	sharpePropertyIds := []string{"623998", "624000", "628594", "633472", "650394", "650416"}
 	franklinPropertyIds := []string{"164362"}
-	complexes := [][]string{dwellPropertyIds, lucilePropertyIds, sharpePropertyIds, franklinPropertyIds}
+	complexes := [][]string{dwellPropertyIds, cliftonPropertyIds, lucilePropertyIds, sharpePropertyIds, franklinPropertyIds}
 
 	token := get_token()
 
