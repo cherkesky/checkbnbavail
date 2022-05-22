@@ -35,9 +35,9 @@ func getListingByProperty(properties []string) ([]string, error) {
 	dbname := os.Getenv("DBNAME")
 	port := os.Getenv("PORT")
 	sslmode := os.Getenv("SSLMODE")
-	timeZone := os.Getenv("TIMEZOME")
+	timeZone := os.Getenv("TIMEZONE")
 
-	db, err := gorm.Open(postgres.Open(fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s timezone=%s", host, port, user, dbname, password, sslmode, timeZone)), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s TimeZone=%s", host, port, user, dbname, password, sslmode, timeZone)), &gorm.Config{})
 	if err != nil {
 		panic(err.Error())
 	}
