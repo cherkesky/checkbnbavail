@@ -117,7 +117,7 @@ func HandleRequest(ctx context.Context, input InputData) ([]string, error) {
 	}
 
 	if len(availProperties) != 0 {
-		fmt.Println(availProperties)
+		fmt.Println("availProperties", availProperties)
 	} else {
 		fmt.Println("No available properties")
 	}
@@ -161,10 +161,8 @@ func checkAvailability(propertyId string, start_date string, end_date string, to
 
 	responsedata := ResponseData{}
 	json.Unmarshal(body, &responsedata)
-	fmt.Println(responsedata)
 
 	daysLength := len(responsedata.Data.Days)
-
 	daysCounter := 0
 
 	for day := range responsedata.Data.Days {
