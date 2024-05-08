@@ -42,29 +42,6 @@ type ResponseData struct {
 	}
 }
 
-// type ResponseData2 struct {
-// 	Data Data
-// }
-// type Data struct {
-// 	Listing_id string `json:"listing_id"`
-// 	Provider   string `json:"provider"`
-// 	Start_date string `json:"start_date"`
-// 	End_date   string `json:"end_date"`
-// 	Days       Days   `json:"days"`
-// }
-
-// type Days struct {
-// 	Date    string `json:"date"`
-// 	Day     string `json:"day"`
-// 	MinStay int    `json:"min_stay"`
-// 	Status  Status `json:"status"`
-// }
-
-// type Status struct {
-// 	Reason    string `json:"reason"`
-// 	Available bool   `json:"available"`
-// }
-
 var (
 	secretName           string = "smartbnb_token_1"
 	region               string = "us-east-1"
